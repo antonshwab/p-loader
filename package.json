@@ -1,0 +1,63 @@
+{
+  "name": "page-loader",
+  "version": "0.0.1",
+  "description": "Hexlet Project #3",
+  "main": "dist/index.js",
+  "bin": {
+    "load-page": "dist/bin/page-loader.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "testwatch": "jest --watch",
+    "babel-node": "babel-node",
+    "eslint": "eslint",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antonshwab/project-lvl3-s100"
+  },
+  "keywords": [
+    "http",
+    "load",
+    "hexlet"
+  ],
+  "author": "Anton Shvab",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antonshwab/project-lvl3-s100/issues"
+  },
+  "homepage": "https://github.com/antonshwab/project-lvl3-s100",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "cheerio": "^1.0.0-rc.1",
+    "nock": "^9.0.13",
+    "yargs": "^8.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "*",
+    "babel-core": "*",
+    "babel-eslint": "*",
+    "babel-plugin-transform-runtime": "*",
+    "babel-preset-env": "*",
+    "babel-preset-stage-0": "*",
+    "debug": "*",
+    "eslint": "*",
+    "eslint-config-airbnb-base": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-jest": "*",
+    "jest": "*"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/__tests__/__fixtures__"
+    ]
+  }
+}
