@@ -5,4 +5,18 @@
 
 # project Page-loader
 
+1. clone repo
+2. npm link
 
+```
+Commands:
+  load [output] <url>  Downloads the page from the url and puts it in the
+                       specified folder (the directory from which you launched
+                       by default)                        [default] [aliases: l]
+
+Options:
+  --output, -o  provide a path to load
+  --help        Show help                       
+  
+                         [boolean]
+```
