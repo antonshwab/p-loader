@@ -1,5 +1,4 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
 import util from 'util';
 import fs from 'fs';
 import path from 'path';
@@ -20,4 +19,4 @@ const load = (url, output) => axios
   })
   .catch(e => console.error(e));
 
-  export default load;
+export default load;
