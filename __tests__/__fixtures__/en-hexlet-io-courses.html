@@ -1,36 +1,34 @@
-<!DOCTYPE html>
-<html prefix='og: http://ogp.me/ns#'>
-<head>
+<!DOCTYPE html><html prefix="og: http://ogp.me/ns#"><head>
 <script type="text/javascript">var _rollbarConfig = {"accessToken":"ffe1d429465e4a398dbb4a64d10b923b","captureUncaught":true,"payload":{"client":{"source_map_enabled":true,"code_version":null,"guess_uncaught_frames":true},"environment":"production","person":{"id":null,"username":null,"email":null}}};</script>
 <script type="text/javascript">!function(r){function o(e){if(n[e])return n[e].exports;var t=n[e]={exports:{},id:e,loaded:!1};return r[e].call(t.exports,t,t.exports,o),t.loaded=!0,t.exports}var n={};return o.m=r,o.c=n,o.p="",o(0)}([function(r,o,n){"use strict";var e=n(1),t=n(4);_rollbarConfig=_rollbarConfig||{},_rollbarConfig.rollbarJsUrl=_rollbarConfig.rollbarJsUrl||"https://cdnjs.cloudflare.com/ajax/libs/rollbar.js/2.0.4/rollbar.min.js",_rollbarConfig.async=void 0===_rollbarConfig.async||_rollbarConfig.async;var a=e.setupShim(window,_rollbarConfig),l=t(_rollbarConfig);window.rollbar=e.Rollbar,a.loadFull(window,document,!_rollbarConfig.async,_rollbarConfig,l)},function(r,o,n){"use strict";function e(r){return function(){try{return r.apply(this,arguments)}catch(r){try{console.error("[Rollbar]: Internal error",r)}catch(r){}}}}function t(r,o){this.options=r,this._rollbarOldOnError=null;var n=s++;this.shimId=function(){return n},window&&window._rollbarShims&&(window._rollbarShims[n]={handler:o,messages:[]})}function a(r,o){var n=o.globalAlias||"Rollbar";if("object"==typeof r[n])return r[n];r._rollbarShims={},r._rollbarWrappedError=null;var t=new d(o);return e(function(){return o.captureUncaught&&(t._rollbarOldOnError=r.onerror,i.captureUncaughtExceptions(r,t,!0),i.wrapGlobals(r,t,!0)),o.captureUnhandledRejections&&i.captureUnhandledRejections(r,t,!0),r[n]=t,t})()}function l(r){return e(function(){var o=this,n=Array.prototype.slice.call(arguments,0),e={shim:o,method:r,args:n,ts:new Date};window._rollbarShims[this.shimId()].messages.push(e)})}var i=n(2),s=0,c=n(3),p=function(r,o){return new t(r,o)},d=c.bind(null,p);t.prototype.loadFull=function(r,o,n,t,a){var l=function(){var o;if(void 0===r._rollbarDidLoad){o=new Error("rollbar.js did not load");for(var n,e,t,l,i=0;n=r._rollbarShims[i++];)for(n=n.messages||[];e=n.shift();)for(t=e.args||[],i=0;i<t.length;++i)if(l=t[i],"function"==typeof l){l(o);break}}"function"==typeof a&&a(o)},i=!1,s=o.createElement("script"),c=o.getElementsByTagName("script")[0],p=c.parentNode;s.crossOrigin="",s.src=t.rollbarJsUrl,n||(s.async=!0),s.onload=s.onreadystatechange=e(function(){if(!(i||this.readyState&&"loaded"!==this.readyState&&"complete"!==this.readyState)){s.onload=s.onreadystatechange=null;try{p.removeChild(s)}catch(r){}i=!0,l()}}),p.insertBefore(s,c)},t.prototype.wrap=function(r,o){try{var n;if(n="function"==typeof o?o:function(){return o||{}},"function"!=typeof r)return r;if(r._isWrap)return r;if(!r._wrapped&&(r._wrapped=function(){try{return r.apply(this,arguments)}catch(e){var o=e;throw"string"==typeof o&&(o=new String(o)),o._rollbarContext=n()||{},o._rollbarContext._wrappedSource=r.toString(),window._rollbarWrappedError=o,o}},r._wrapped._isWrap=!0,r.hasOwnProperty))for(var e in r)r.hasOwnProperty(e)&&(r._wrapped[e]=r[e]);return r._wrapped}catch(o){return r}};for(var u="log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection".split(","),f=0;f<u.length;++f)t.prototype[u[f]]=l(u[f]);r.exports={setupShim:a,Rollbar:d}},function(r,o){"use strict";function n(r,o,n){if(r){var t;"function"==typeof o._rollbarOldOnError?t=o._rollbarOldOnError:r.onerror&&!r.onerror.belongsToShim&&(t=r.onerror,o._rollbarOldOnError=t);var a=function(){var n=Array.prototype.slice.call(arguments,0);e(r,o,t,n)};a.belongsToShim=n,r.onerror=a}}function e(r,o,n,e){r._rollbarWrappedError&&(e[4]||(e[4]=r._rollbarWrappedError),e[5]||(e[5]=r._rollbarWrappedError._rollbarContext),r._rollbarWrappedError=null),o.handleUncaughtException.apply(o,e),n&&n.apply(r,e)}function t(r,o,n){if(r){"function"==typeof r._rollbarURH&&r._rollbarURH.belongsToShim&&r.removeEventListener("unhandledrejection",r._rollbarURH);var e=function(r){var n=r.reason,e=r.promise,t=r.detail;!n&&t&&(n=t.reason,e=t.promise),o&&o.handleUnhandledRejection&&o.handleUnhandledRejection(n,e)};e.belongsToShim=n,r._rollbarURH=e,r.addEventListener("unhandledrejection",e)}}function a(r,o,n){if(r){var e,t,a="EventTarget,Window,Node,ApplicationCache,AudioTrackList,ChannelMergerNode,CryptoOperation,EventSource,FileReader,HTMLUnknownElement,IDBDatabase,IDBRequest,IDBTransaction,KeyOperation,MediaController,MessagePort,ModalWindow,Notification,SVGElementInstance,Screen,TextTrack,TextTrackCue,TextTrackList,WebSocket,WebSocketWorker,Worker,XMLHttpRequest,XMLHttpRequestEventTarget,XMLHttpRequestUpload".split(",");for(e=0;e<a.length;++e)t=a[e],r[t]&&r[t].prototype&&l(o,r[t].prototype,n)}}function l(r,o,n){if(o.hasOwnProperty&&o.hasOwnProperty("addEventListener")){for(var e=o.addEventListener;e._rollbarOldAdd&&e.belongsToShim;)e=e._rollbarOldAdd;var t=function(o,n,t){e.call(this,o,r.wrap(n),t)};t._rollbarOldAdd=e,t.belongsToShim=n,o.addEventListener=t;for(var a=o.removeEventListener;a._rollbarOldRemove&&a.belongsToShim;)a=a._rollbarOldRemove;var l=function(r,o,n){a.call(this,r,o&&o._wrapped||o,n)};l._rollbarOldRemove=a,l.belongsToShim=n,o.removeEventListener=l}}r.exports={captureUncaughtExceptions:n,captureUnhandledRejections:t,wrapGlobals:a}},function(r,o){"use strict";function n(r,o){this.impl=r(o,this),this.options=o,e(n.prototype)}function e(r){for(var o=function(r){return function(){var o=Array.prototype.slice.call(arguments,0);if(this.impl[r])return this.impl[r].apply(this.impl,o)}},n="log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,_createItem,wrap,loadFull,shimId".split(","),e=0;e<n.length;e++)r[n[e]]=o(n[e])}n.prototype._swapAndProcessMessages=function(r,o){this.impl=r(this.options);for(var n,e,t;n=o.shift();)e=n.method,t=n.args,this[e]&&"function"==typeof this[e]&&this[e].apply(this,t);return this},r.exports=n},function(r,o){"use strict";r.exports=function(r){return function(o){if(!o&&!window._rollbarInitialized){r=r||{};for(var n,e,t=r.globalAlias||"Rollbar",a=window.rollbar,l=function(r){return new a(r)},i=0;n=window._rollbarShims[i++];)e||(e=n.handler),n.handler._swapAndProcessMessages(l,n.messages);window[t]=e,window._rollbarInitialized=!0}}}}]);</script>
-<link rel="stylesheet" media="all" href="/assets/application-f6f7fab8ecc488e8feb7cec9f3f18a573ac349b6eed31cbf1b406d998bd88518.css" />
+<link rel="stylesheet" media="all" href="en-hexlet-io-courses_files/assets-application-f6f7fab8ecc488e8feb7cec9f3f18a573ac349b6eed31cbf1b406d998bd88518.css">
 <title>Courses - Hexlet.io</title>
-<link rel="shortcut icon" type="image/x-icon" href="/assets/icons/default/favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/favicon-196x196-422632c0ef41e9b13dd7ea89f1764e860d225ca3c20502b966a00c0039409a75.png" sizes="196x196" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/favicon-96x96-39f08613bbf8b826ce119c3b6bc232db10c863c168d57b180f78d18cadf843c6.png" sizes="96x96" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/favicon-32x32-2bae33d5d827199a252cd9309926586f01044782f3c83e3ffaf783bb318707a2.png" sizes="32x32" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/favicon-16x16-cc9a0ab442a9dcba7e70fb733f58691955a2d1608fe439a5eed2afab400eb719.png" sizes="16x16" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/favicon-128-a9446dd4e081479874e0c59b63960612d181b05b10b2fbd544a7da7c5f6ead2a.png" sizes="128x128" />
-<link rel="shortcut icon" type="image/png" href="/assets/icons/default/android-icon-192x192-d4b29b393f0ec444bed29668e9b4b16aeb0a9c5312700e4f0819a96f72286cfc.png" sizes="192x192" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-57x57-f52e49208ae173f740c8f115217781975b78433b1fda469ec28ce70b92fc013e.png" sizes="57x57" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-114x114-c93f5c2681345acc94f672dc26dd79695eac733a3ac6f99ab3b0fbfa077d834e.png" sizes="114x114" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-72x72-27e1216e0a1b806d82b8ca649081eacf5b3f59b677b44c8e40eae30e83f90294.png" sizes="72x72" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-144x144-1f4fb8973826b06c9595101aac7f78fdb9bf26c3b769b759882ad319d58b17fd.png" sizes="144x144" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-60x60-08818618834c9c99de70284d4bfb0cdfc926b03c88c732ba92fd9ba9e5ac900f.png" sizes="60x60" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-120x120-3da36d0e1da4c8d1a6df85aec54c2b84946e96865005ffb4a10e99223bba2d61.png" sizes="120x120" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-76x76-6a66b2c592947eb379280523cb009884f61f620be8375ebdee3ed7d23743314a.png" sizes="76x76" />
-<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="/assets/icons/default/apple-touch-icon-152x152-93cc5e1542f2ca0d20c1f7fca7b5ac37be57f70e42d23877668d616383497540.png" sizes="152x152" />
-<meta content=' ' name='application-name'>
-<meta content='#FFFFFF' name='msapplication-TileColor'>
-<meta content='/assets/icons/default/mstile-144x144-1f4fb8973826b06c9595101aac7f78fdb9bf26c3b769b759882ad319d58b17fd.png' name='msapplication-TileImage'>
-<meta content='/assets/icons/default/mstile-70x70-a9446dd4e081479874e0c59b63960612d181b05b10b2fbd544a7da7c5f6ead2a.png' name='msapplication-square70x70logo'>
-<meta content='/assets/icons/default/mstile-150x150-58610d84ec0afe2803c6e07649701c712e3257ab5fc06c6cd338557201b2571a.png' name='msapplication-square150x150logo'>
-<meta content='/assets/icons/default/mstile-310x150-74279c38ca713e2d5526d2fc170c0c7951b85b83852fc22a59b216c73843a5ce.png' name='msapplication-wide310x150logo'>
-<meta content='/assets/icons/default/mstile-310x310-dfe850e714b2b802fb7455a582bf8d34dcbd73c6e8d100a54d4c36007079f4e2.png' name='msapplication-square310x310logo'>
+<link rel="shortcut icon" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-favicon-196x196-422632c0ef41e9b13dd7ea89f1764e860d225ca3c20502b966a00c0039409a75.png" sizes="196x196">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-favicon-96x96-39f08613bbf8b826ce119c3b6bc232db10c863c168d57b180f78d18cadf843c6.png" sizes="96x96">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-favicon-32x32-2bae33d5d827199a252cd9309926586f01044782f3c83e3ffaf783bb318707a2.png" sizes="32x32">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-favicon-16x16-cc9a0ab442a9dcba7e70fb733f58691955a2d1608fe439a5eed2afab400eb719.png" sizes="16x16">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-favicon-128-a9446dd4e081479874e0c59b63960612d181b05b10b2fbd544a7da7c5f6ead2a.png" sizes="128x128">
+<link rel="shortcut icon" type="image/png" href="en-hexlet-io-courses_files/assets-icons-default-android-icon-192x192-d4b29b393f0ec444bed29668e9b4b16aeb0a9c5312700e4f0819a96f72286cfc.png" sizes="192x192">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-57x57-f52e49208ae173f740c8f115217781975b78433b1fda469ec28ce70b92fc013e.png" sizes="57x57">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-114x114-c93f5c2681345acc94f672dc26dd79695eac733a3ac6f99ab3b0fbfa077d834e.png" sizes="114x114">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-72x72-27e1216e0a1b806d82b8ca649081eacf5b3f59b677b44c8e40eae30e83f90294.png" sizes="72x72">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-144x144-1f4fb8973826b06c9595101aac7f78fdb9bf26c3b769b759882ad319d58b17fd.png" sizes="144x144">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-60x60-08818618834c9c99de70284d4bfb0cdfc926b03c88c732ba92fd9ba9e5ac900f.png" sizes="60x60">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-120x120-3da36d0e1da4c8d1a6df85aec54c2b84946e96865005ffb4a10e99223bba2d61.png" sizes="120x120">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-76x76-6a66b2c592947eb379280523cb009884f61f620be8375ebdee3ed7d23743314a.png" sizes="76x76">
+<link rel="apple-touch-icon-precomposed" type="image/x-icon" href="en-hexlet-io-courses_files/assets-icons-default-apple-touch-icon-152x152-93cc5e1542f2ca0d20c1f7fca7b5ac37be57f70e42d23877668d616383497540.png" sizes="152x152">
+<meta content="&#xA0;" name="application-name">
+<meta content="#FFFFFF" name="msapplication-TileColor">
+<meta content="en-hexlet-io-courses_files/assets-icons-default-mstile-144x144-1f4fb8973826b06c9595101aac7f78fdb9bf26c3b769b759882ad319d58b17fd.png" name="msapplication-TileImage">
+<meta content="en-hexlet-io-courses_files/assets-icons-default-mstile-70x70-a9446dd4e081479874e0c59b63960612d181b05b10b2fbd544a7da7c5f6ead2a.png" name="msapplication-square70x70logo">
+<meta content="en-hexlet-io-courses_files/assets-icons-default-mstile-150x150-58610d84ec0afe2803c6e07649701c712e3257ab5fc06c6cd338557201b2571a.png" name="msapplication-square150x150logo">
+<meta content="en-hexlet-io-courses_files/assets-icons-default-mstile-310x150-74279c38ca713e2d5526d2fc170c0c7951b85b83852fc22a59b216c73843a5ce.png" name="msapplication-wide310x150logo">
+<meta content="en-hexlet-io-courses_files/assets-icons-default-mstile-310x310-dfe850e714b2b802fb7455a582bf8d34dcbd73c6e8d100a54d4c36007079f4e2.png" name="msapplication-square310x310logo">
 
-<meta name="csrf-param" content="authenticity_token" />
-<meta name="csrf-token" content="Qf6Z2OwOU/WQoHjiHwiN5h8Cd3yOBqgheBeX5Ee8BEwzYU5XVmBU5g/DUNIXgmNw1F86JuKu/jsjgdLB8jXPeA==" />
-<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="Qf6Z2OwOU/WQoHjiHwiN5h8Cd3yOBqgheBeX5Ee8BEwzYU5XVmBU5g/DUNIXgmNw1F86JuKu/jsjgdLB8jXPeA==">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <script>
 //<![CDATA[
 window.gon={};gon.applications={};gon.current_user={"id":null,"guest":true,"admin":false};gon.token="Nf+yYH1gZAMscvYyM5xCv8IuFxQiTVZkb4QdjZCfRxNHYGXvxw5jELMR3gI7FqwpCXNaTk7lAH40ElioJRaMJw==";gon.disqus_name="hexlet-eng";gon.locale="en";gon.rails_env="production";gon.analytics_events="AnalyticsEvents";gon.subdomains=["en.hexlet.io","ru.hexlet.io"];gon.images={"secure_payment":"\/assets\/secure_payment-65c69d1a5efbb8fb7adf6f59697003b0996920cd54bdee7d7a558cb7d961c7ad.png"};
@@ -72,15 +70,15 @@ window.gon={};gon.applications={};gon.current_user={"id":null,"guest":true,"admi
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-WK88TH');</script>
-</script>
 
 
-<link rel="alternate" type="application/rss+xml" title="RSS" href="https://en.hexlet.io/lessons.rss" />
-<meta content='website' property='og:type'>
-<meta content='Courses - Hexlet.io' property='og:title'>
-<meta content='https://en.hexlet.io/courses' property='og:url'>
-<meta content='Learn to code and develop apps with videos and exercises' name='description'>
-<meta content='Learn to code and develop apps with videos and exercises' property='og:description'>
+
+<link rel="alternate" type="application/rss+xml" title="RSS" href="https://en.hexlet.io/lessons.rss">
+<meta content="website" property="og:type">
+<meta content="Courses - Hexlet.io" property="og:title">
+<meta content="https://en.hexlet.io/courses" property="og:url">
+<meta content="Learn to code and develop apps with videos and exercises" name="description">
+<meta content="Learn to code and develop apps with videos and exercises" property="og:description">
 
 </head>
 <body>
@@ -88,87 +86,87 @@ window.gon={};gon.applications={};gon.current_user={"id":null,"guest":true,"admi
 <iframe height='0' src='https://www.googletagmanager.com/ns.html?id=GTM-WK88TH' style='display:none;visibility:hidden' width='0'></iframe>
 </noscript>
 
-<nav class='navbar navbar-light hexlet-navbar navbar-toggleable-md'>
-<button aria-controls='navbarResponsive' aria-expanded='false' aria-label='Toggle navigation' class='navbar-toggler' data-target='#navbarResponsive' data-toggle='collapse' type='button'>
-<span class='navbar-toggler-icon'></span>
+<nav class="navbar navbar-light hexlet-navbar navbar-toggleable-md">
+<button aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbarResponsive" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
 </button>
-<div class='navbar-collapse collapse' id='navbarResponsive'>
-<a aria-hidden='true' class='navbar-brand mr-4' href='/'>
+<div class="navbar-collapse collapse" id="navbarResponsive">
+<a aria-hidden="true" class="navbar-brand mr-4" href="/">
 Hexlet
 </a>
-<ul class='navbar-nav mr-auto'>
-<li class="nav-item"><a class="nav-link  active" href="/courses"><span class='fa fa-university hexlet-header-icon'></span>
+<ul class="navbar-nav mr-auto">
+<li class="nav-item"><a class="nav-link  active" href="/courses"><span class="fa fa-university hexlet-header-icon"></span>
 Courses
-</a></li><li class='nav-item'>
-<a class="nav-link" href="/pricing"><span class='fa fa-dollar hexlet-header-icon'></span>
+</a></li><li class="nav-item">
+<a class="nav-link" href="/pricing"><span class="fa fa-dollar hexlet-header-icon"></span>
 Pricing
 </a></li>
 </ul>
-<ul class='navbar-nav' id='notifications'></ul>
-<ul class='navbar-nav'>
-<li class='nav-item mr-2'><a class="nav-link" href="https://hexlet.io/session/new?from=https%3A%2F%2Fen.hexlet.io%2Fcourses">Log in</a></li>
-<li class='nav-item'><form class="button_to" method="get" action="/u/new?from=https%3A%2F%2Fen.hexlet.io%2Fcourses"><input class="btn btn-success navbar-btn" type="submit" value="Create free account" /></form></li>
+<ul class="navbar-nav" id="notifications"></ul>
+<ul class="navbar-nav">
+<li class="nav-item mr-2"><a class="nav-link" href="https://hexlet.io/session/new?from=https%3A%2F%2Fen.hexlet.io%2Fcourses">Log in</a></li>
+<li class="nav-item"><form class="button_to" method="get" action="/u/new?from=https%3A%2F%2Fen.hexlet.io%2Fcourses"><input class="btn btn-success navbar-btn" type="submit" value="Create free account"></form></li>
 </ul>
 </div>
 </nav>
 
-<div class='container py-2'>
+<div class="container py-2">
 
-<div class='container'>
-<div class='row mt-5'>
-<div class='col-xs-12'>
-<h1 class='display-4 mb-5 text-center'>Courses</h1>
-<div class='row pb-5'>
-<div class='col-lg-4 col-sm-6 col-xs-12 mb-4'>
-<div class='card'>
-<div class='hexlet-ribbon-wrapper-green'>
-<div class='hexlet-ribbon-green'>FREE</div>
+<div class="container">
+<div class="row mt-5">
+<div class="col-xs-12">
+<h1 class="display-4 mb-5 text-center">Courses</h1>
+<div class="row pb-5">
+<div class="col-lg-4 col-sm-6 col-xs-12 mb-4">
+<div class="card">
+<div class="hexlet-ribbon-wrapper-green">
+<div class="hexlet-ribbon-green">FREE</div>
 </div>
-<a href="/courses/intro_to_programming"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Intro to Programming" src="https://cdn2.hexlet.io/attachments/d5df265bb0aa50bf1e61b9a700913825b9b34e20/store/b5c5d849575af3af6152cea4663c30e1f624620641b0245fa81cede3144e/image.png" />
-</a><div class='card-block text-center'>
-<h3 class='h5 mb-0'><a href="/courses/intro_to_programming">Intro to Programming</a></h3>
-</div>
-</div>
-
-</div>
-<div class='col-lg-4 col-sm-6 col-xs-12 mb-4'>
-<div class='card'>
-<div class='hexlet-ribbon-wrapper-green'>
-<div class='hexlet-ribbon-green'>FREE</div>
-</div>
-<a href="/courses/introduction_to_c_programming_language"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Intro to C programming language" src="https://cdn2.hexlet.io/attachments/f01f454973198addb0659a46e5b63269d3f21a77/store/eedf2f62b2a1a8a26a472ee7de7f71d2a22d7fbd368e61014bdd34ba2242/image.png" />
-</a><div class='card-block text-center'>
-<h3 class='h5 mb-0'><a href="/courses/introduction_to_c_programming_language">Intro to C programming language</a></h3>
+<a href="/courses/intro_to_programming"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Intro to Programming" src="https://cdn2.hexlet.io/attachments/d5df265bb0aa50bf1e61b9a700913825b9b34e20/store/b5c5d849575af3af6152cea4663c30e1f624620641b0245fa81cede3144e/image.png">
+</a><div class="card-block text-center">
+<h3 class="h5 mb-0"><a href="/courses/intro_to_programming">Intro to Programming</a></h3>
 </div>
 </div>
 
 </div>
-<div class='col-lg-4 col-sm-6 col-xs-12 mb-4'>
-<div class='card'>
-<a href="/courses/regular_expressions"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Regular expressions" src="https://cdn2.hexlet.io/attachments/85ae49432d9284c0bcbefbf8505373ab96e249fd/store/e36d6f1c5014abae265a1b04a2669f0ce09c20985ec3421f783ede79592e/image.png" />
-</a><div class='card-block text-center'>
-<h3 class='h5 mb-0'><a href="/courses/regular_expressions">Regular expressions</a></h3>
+<div class="col-lg-4 col-sm-6 col-xs-12 mb-4">
+<div class="card">
+<div class="hexlet-ribbon-wrapper-green">
+<div class="hexlet-ribbon-green">FREE</div>
+</div>
+<a href="/courses/introduction_to_c_programming_language"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Intro to C programming language" src="https://cdn2.hexlet.io/attachments/f01f454973198addb0659a46e5b63269d3f21a77/store/eedf2f62b2a1a8a26a472ee7de7f71d2a22d7fbd368e61014bdd34ba2242/image.png">
+</a><div class="card-block text-center">
+<h3 class="h5 mb-0"><a href="/courses/introduction_to_c_programming_language">Intro to C programming language</a></h3>
 </div>
 </div>
 
 </div>
-<div class='col-lg-4 col-sm-6 col-xs-12 mb-4'>
-<div class='card'>
-<a href="/courses/ansible_basics"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Ansible basics" src="https://cdn2.hexlet.io/attachments/8bb56fd2beb3e373d72ebece2bad1c55d5939a8d/store/1f37bdd55104906c2047752c5b5fff0e76638e3de7388037b29f15ce6da7/image.png" />
-</a><div class='card-block text-center'>
-<h3 class='h5 mb-0'><a href="/courses/ansible_basics">Ansible basics</a></h3>
+<div class="col-lg-4 col-sm-6 col-xs-12 mb-4">
+<div class="card">
+<a href="/courses/regular_expressions"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Regular expressions" src="https://cdn2.hexlet.io/attachments/85ae49432d9284c0bcbefbf8505373ab96e249fd/store/e36d6f1c5014abae265a1b04a2669f0ce09c20985ec3421f783ede79592e/image.png">
+</a><div class="card-block text-center">
+<h3 class="h5 mb-0"><a href="/courses/regular_expressions">Regular expressions</a></h3>
 </div>
 </div>
 
 </div>
-<div class='col-lg-4 col-sm-6 col-xs-12 mb-4'>
-<div class='card'>
-<div class='hexlet-ribbon-wrapper-green'>
-<div class='hexlet-ribbon-green'>FREE</div>
+<div class="col-lg-4 col-sm-6 col-xs-12 mb-4">
+<div class="card">
+<a href="/courses/ansible_basics"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Ansible basics" src="https://cdn2.hexlet.io/attachments/8bb56fd2beb3e373d72ebece2bad1c55d5939a8d/store/1f37bdd55104906c2047752c5b5fff0e76638e3de7388037b29f15ce6da7/image.png">
+</a><div class="card-block text-center">
+<h3 class="h5 mb-0"><a href="/courses/ansible_basics">Ansible basics</a></h3>
 </div>
-<a href="/courses/basics_of_bash"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Basics of Bash" src="https://cdn2.hexlet.io/attachments/80867ec66ee4afaa3d8e6bcf1108f7cf6d2a9e0b/store/a7fcca177530f907f678c860e3ec9e67b21e9b54411e57017ef56a878f77/image.png" />
-</a><div class='card-block text-center'>
-<h3 class='h5 mb-0'><a href="/courses/basics_of_bash">Basics of Bash</a></h3>
+</div>
+
+</div>
+<div class="col-lg-4 col-sm-6 col-xs-12 mb-4">
+<div class="card">
+<div class="hexlet-ribbon-wrapper-green">
+<div class="hexlet-ribbon-green">FREE</div>
+</div>
+<a href="/courses/basics_of_bash"><img class="attachment course image card-img-top img-fluid hexlet-course-image" alt="Basics of Bash" src="https://cdn2.hexlet.io/attachments/80867ec66ee4afaa3d8e6bcf1108f7cf6d2a9e0b/store/a7fcca177530f907f678c860e3ec9e67b21e9b54411e57017ef56a878f77/image.png">
+</a><div class="card-block text-center">
+<h3 class="h5 mb-0"><a href="/courses/basics_of_bash">Basics of Bash</a></h3>
 </div>
 </div>
 
@@ -179,79 +177,79 @@ Pricing
 </div>
 
 </div>
-<footer class='footer hexlet-footer py-5 mt-5 text-muted'>
-<div class='container'>
-<div class='row'>
-<div class='col-lg-4 col-sm-12 col-12 mt-1'>
-<div class='h3 hexlet-light-title'>
+<footer class="footer hexlet-footer py-5 mt-5 text-muted">
+<div class="container">
+<div class="row">
+<div class="col-lg-4 col-sm-12 col-12 mt-1">
+<div class="h3 hexlet-light-title">
 Hexlet.io
-<i class='hexlet-font-weight-lighter'>βeta,</i>
+<i class="hexlet-font-weight-lighter">&#x3B2;eta,</i>
 2017
 </div>
 <a href="mailto:support@hexlet.io">support@hexlet.io</a>
 /
 <a href="/pages/faq">FAQ</a>
-<div class='pr-2'>
+<div class="pr-2">
 <hr>
 </div>
 <p>
-<ul class='nav flex-column'>
-<li class='nav-item'><a href="/pages/about">About us</a></li>
+</p><ul class="nav flex-column">
+<li class="nav-item"><a href="/pages/about">About us</a></li>
 <!-- %li.nav-item= link_to t('.help'), help_pages_curl -->
 <!-- %li.nav-item= link_to t('.testimonials'), page_path('testimonials') -->
-<li class='nav-item'><a href="/pages/tos">Terms of service</a></li>
+<li class="nav-item"><a href="/pages/tos">Terms of service</a></li>
 </ul>
-</p>
-<p class='mt-2'>
+<p></p>
+<p class="mt-2">
 Hexlet Ltd
 <br>
 Puolikkotie 8, 02230 Espoo, Finland
 <br>
-VAT ID: FI26641607
+VAT ID:&#xA0;FI26641607
 </p>
 </div>
-<div class='col-lg-3 col-sm-6 col-12 mt-1'>
-<div class='h5'>Follow us</div>
-<ul class='nav flex-column'>
-<li class='nav-item'>
-<span class='fa fa-newspaper-o'></span>
-&nbsp;
+<div class="col-lg-3 col-sm-6 col-12 mt-1">
+<div class="h5">Follow us</div>
+<ul class="nav flex-column">
+<li class="nav-item">
+<span class="fa fa-newspaper-o"></span>
+&#xA0;
 <a href="/blog">Blog</a>
 </li>
-<li class='nav-item'>
-<span class='fa fa-video-camera'></span>
-&nbsp;
+<li class="nav-item">
+<span class="fa fa-video-camera"></span>
+&#xA0;
 <a target="_blank" href="https://www.youtube.com/channel/UCBmKU1FHwhAoljWDORWgcRA"> youtube</a>
 </li>
-<li class='nav-item'>
-<span class='fa fa-twitter'></span>
-&nbsp;
+<li class="nav-item">
+<span class="fa fa-twitter"></span>
+&#xA0;
 <a target="_blank" href="http://twitter.com/Hexlet_IO"> twitter</a>
 </li>
-<li class='nav-item'>
-<span class='fa fa-facebook'></span>
-&nbsp;
+<li class="nav-item">
+<span class="fa fa-facebook"></span>
+&#xA0;
 <a target="_blank" href="https://www.facebook.com/Hexlet.io"> facebook</a>
 </li>
 <li>
-<span class='fa fa-history mt-3'></span>
-&nbsp;
+<span class="fa fa-history mt-3"></span>
+&#xA0;
 <a target="_blank" href="http://changelog.hexlet.io">Changelog</a>
 </li>
 </ul>
 </div>
-<div class='col-lg-3 col-sm-6 col-12 mt-1'>
-<div class='h5'>Learn more</div>
-<ul class='nav flex-column'>
-<li class='nav-item'><a href="/news">Hexlet News</a></li>
-<li class='nav-item'><a href="https://en.hexlet.io/gift">Gifts</a></li>
-<li class='nav-item'><a href="/my/blog_posts">My blog posts</a></li>
+<div class="col-lg-3 col-sm-6 col-12 mt-1">
+<div class="h5">Learn more</div>
+<ul class="nav flex-column">
+<li class="nav-item"><a href="/news">Hexlet News</a></li>
+<li class="nav-item"><a href="https://en.hexlet.io/gift">Gifts</a></li>
+<li class="nav-item"><a href="/my/blog_posts">My blog posts</a></li>
 </ul>
 </div>
-<div class='col-lg-2 col-sm-6 col-12 mt-1'>
-<ul class='nav flex-column mt-4'>
-<li class='nav-item'><a href="/community">Community</a></li>
-<li class='nav-item'><a href="https://en.hexlet.io/feedback">Ideas and feedback</a></li>
+<div class="col-lg-2 col-sm-6 col-12 mt-1">
+<ul class="nav flex-column mt-4">
+<li class="nav-item"><a href="/community">Community</a></li>
+<li class="nav-item"><a href="https://en.hexlet.io/feedback">Ideas and feedback</a></li>
 <!-- %li.nav-item= link_to t('.jobs'), jobs_path -->
 <!-- %li.nav-item= link_to t('.for_teams'), teams_path -->
 <!-- %li.nav-item= link_to t('.business'), business_root_path -->
@@ -263,8 +261,8 @@ VAT ID: FI26641607
 </div>
 </footer>
 <script src="https://polyfill.io/v2/polyfill.min.js"></script>
-<script src="/assets/essential-1be7ec1eb7fb742f45794fdcd655ba67bea88b520e799abb21c29b54676eac04.js"></script>
-<script src="/assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js"></script>
+<script src="en-hexlet-io-courses_files/assets-essential-1be7ec1eb7fb742f45794fdcd655ba67bea88b520e799abb21c29b54676eac04.js"></script>
+<script src="en-hexlet-io-courses_files/assets-application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js"></script>
 <script>
   !function(e,o,n){
   window.HSCW=o,window.HS=n,n.beacon=n.beacon||{};var t=n.beacon;t.userConfig={},t.readyQueue=[],
@@ -295,5 +293,6 @@ VAT ID: FI26641607
 
 
 
-</body>
-</html>
+
+
+</body></html>
