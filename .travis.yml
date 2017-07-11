@@ -5,6 +5,8 @@ node_js:
 addons:
   code_climate:
     repo_token: bd0060cfd9273bcc154447a0bd88b2104e94dcbaf181534476ec86086106f0d4
+    exclude_paths:
+      - __tests__/__fixtures__/
 script: 
   - make lint test
 
