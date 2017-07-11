@@ -57,7 +57,7 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
-      "<rootDir>/__tests__/__fixtures__"
+      "<rootDir>/__tests__/__fixtures__/"
     ]
   }
 }
