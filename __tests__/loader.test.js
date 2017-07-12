@@ -3,12 +3,12 @@ import httpAdapter from 'axios/lib/adapters/http';
 import nock from 'nock';
 import path from 'path';
 import fs from 'fs';
-import util from 'util';
+// import util from 'util';
 import os from 'os';
 import load from '../src';
 
-const readFile = util.promisify(fs.readFile);
-const readdir = util.promisify(fs.readdir);
+// const readFile = util.promisify(fs.readFile);
+// const readdir = util.promisify(fs.readdir);
 
 const assetsPathes = [
   '/assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js',
@@ -79,7 +79,7 @@ test('https://en.hexlet.io/courses', () => {
     .then(() => {
       const actualHtml = fs.readFileSync(path.resolve(outputPath, htmlFilename), 'utf8');
       const expectedHtml = fs.readFileSync(path.resolve(fixturesPath, htmlFilename), 'utf8');
-      console.log(typeof actualHtml);
+      // console.log(typeof actualHtml);
       expect(actualHtml).toBe(expectedHtml);
 
       const assetFilenames = fs.readdirSync(actualAssetsPath);
@@ -97,7 +97,7 @@ test('https://en.hexlet.io/courses', () => {
 
           const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
           expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
-          expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); }); 
+          expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
         }
         expect(actualAsset).toBe(expectedAsset);
       });
@@ -137,7 +137,8 @@ test('https://en.hexlet.io/courses', () => {
     //       actualReadable.on('data', (chunk) => { actualAsset += chunk; });
     //       actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
 
-    //       const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
+    //       const expectedReadable = 
+  //  fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
     //       // let expectedAsset;
     //       expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
     //       expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
