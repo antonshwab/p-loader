@@ -54,6 +54,7 @@ const readStream = _path => fs.createReadStream(_path);
 const reads = {
   png: readStream,
   ico: readStream,
+  jpg: readStream,
   js: readText,
   css: readText,
 };
@@ -80,26 +81,27 @@ beforeAll(() => {
 
 test('https://en.hexlet.io/courses', () => {
   expect.assertions(24);
-  const htmlPath = path.resolve(outputPath, htmlFilename);
   console.log(outputPath);
   return load('https://en.hexlet.io/courses', outputPath)
-    .then(() => readFile(htmlPath, 'utf8'))
-    .then(actualHtml => expect(actualHtml).toEqual(expectedHtml))
-    .then(() => readdir(actualAssetsPath))
-    .then((_assetsFilenames) => {
-      _assetsFilenames.forEach((name) => {
-        const extname = path.extname(name).slice(1);
+    .then(() => readFile(path.resolve(outputPath, htmlFilename), 'utf8'))
+    .then((actualHtml) => {
+      expect(actualHtml).toEqual(expectedHtml);
+      return readdir(actualAssetsPath);
+    })
+    .then((assetFilenames) => {
+      assetFilenames.forEach((assetfn) => {
+        const extname = path.extname(assetfn).slice(1);
         if (extname === 'js' || extname === 'css') {
-          const expectedAsset = assets.get(name);
-          const actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, name), 'utf8');
+          const expectedAsset = assets.get(assetfn);
+          const actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
           expect(actualAsset).toEqual(expectedAsset);
         } else {
-          const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, name));
+          const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
           let actualAsset;
           actualReadable.on('data', (chunk) => { actualAsset += chunk; });
           actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
 
-          const expectedReadable = assets.get(name);
+          const expectedReadable = assets.get(assetfn);
           let expectedAsset;
           expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
           expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
