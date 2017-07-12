@@ -81,7 +81,7 @@ beforeAll(() => {
 
 test('https://en.hexlet.io/courses', () => {
   expect.assertions(24);
-  console.log(outputPath);
+  // console.log(outputPath);
   return load('https://en.hexlet.io/courses', outputPath)
     .then(() => readFile(path.resolve(outputPath, htmlFilename), 'utf8'))
     .then((actualHtml) => {
