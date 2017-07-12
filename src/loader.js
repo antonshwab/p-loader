@@ -67,18 +67,23 @@ const load = (url, output) => axios
 
     return Promise.all([pathAndOpts, mkdir(assetsPath), writeFile(htmlPath, localHtml)]);
   })
-  .then(([pathAndOpts]) => {
-    console.log(Array.from(pathAndOpts));
-    return Promise.all([
-      Array.from(pathAndOpts).map(([_path, opt]) => [_path, opt.responseType]),
-      ...Array.from(pathAndOpts).map(([, opt]) => axios(opt)),
-    ]);
-  })
-  .then(([pathAndRespTypes, ...resps]) =>
-    Promise.all(resps.map((resp, i) => {
-      const [_path, responseType] = pathAndRespTypes[i];
-      return writes[responseType](resp, _path);
-    })))
+  .then(([pathAndOpts]) => Promise.all(
+    Array.from(pathAndOpts)
+      .map(([_path, opt]) => Promise.all([axios(opt), _path, opt.responseType]))))
+  .then(results => Promise.all(
+    results.map(([resp, _path, responseType]) => writes[responseType](resp, _path))))
+  // .then(([pathAndOpts]) => {
+  //   console.log(Array.from(pathAndOpts));
+  //   return Promise.all([
+  //     Array.from(pathAndOpts).map(([_path, opt]) => [_path, opt.responseType]),
+  //     ...Array.from(pathAndOpts).map(([, opt]) => axios(opt)),
+  //   ]);
+  // })
+  // .then(([pathAndRespTypes, ...resps]) =>
+  //   Promise.all(resps.map((resp, i) => {
+  //     const [_path, responseType] = pathAndRespTypes[i];
+  //     return writes[responseType](resp, _path);
+  //   })))
   .catch(e => console.error(e));
 
 export default load;
