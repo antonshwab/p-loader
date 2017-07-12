@@ -4,6 +4,7 @@ import util from 'util';
 import fs from 'fs';
 import path from 'path';
 import { URL } from 'url';
+import stream from 'stream';
 
 const writeFile = util.promisify(fs.writeFile);
 const mkdir = util.promisify(fs.mkdir);
@@ -65,14 +66,20 @@ const load = (url, output) => axios
     });
     const localHtml = $.html();
 
-    writeFile(htmlPath, localHtml)
-      .then(() => mkdir(assetsPath))
-      .then(() => pathAndOpts.forEach((opt, _path) => {
-        axios(opt)
-          .then(response => writes[opt.responseType](response, _path))
-          .catch(e => console.error(e));
-      }))
-      .catch(e => console.error(e));
+    return Promise.all([pathAndOpts, mkdir(assetsPath), writeFile(htmlPath, localHtml)]);
+  })
+  .then(([pathAndOpts]) => {
+    console.log(Array.from(pathAndOpts));
+    return Promise.all([
+      Array.from(pathAndOpts).map(([_path, opt]) => [_path, opt.responseType]),
+      ...Array.from(pathAndOpts).map(([, opt]) => axios(opt)),
+    ]);
+  })
+  .then(([pathAndRespTypes, ...resps]) => {
+    return Promise.all(resps.map((resp, i) => {
+      const [_path, responseType] = pathAndRespTypes[i];
+      return writes[responseType](resp, _path);
+    }));
   })
   .catch(e => console.error(e));
 

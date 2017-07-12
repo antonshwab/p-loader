@@ -10,16 +10,6 @@ import load from '../src';
 const readFile = util.promisify(fs.readFile);
 const readdir = util.promisify(fs.readdir);
 
-let outputPath;
-let actualAssetsPath;
-let expectedHtml;
-
-const fixturesPath = path.join(__dirname, '__fixtures__');
-const htmlFilename = 'en-hexlet-io-courses.html';
-const expectedHtmlPath = path.resolve(fixturesPath, htmlFilename);
-const assetsDirname = 'en-hexlet-io-courses_files';
-const expectedAssetsPath = path.resolve(fixturesPath, assetsDirname);
-
 const assetsPathes = [
   '/assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js',
   '/assets/application-f6f7fab8ecc488e8feb7cec9f3f18a573ac349b6eed31cbf1b406d998bd88518.css',
@@ -46,8 +36,6 @@ const assetsPathes = [
   '/assets/icons/default/mstile-70x70-a9446dd4e081479874e0c59b63960612d181b05b10b2fbd544a7da7c5f6ead2a.png',
 ];
 
-const assets = new Map();
-
 const readText = _path => fs.readFileSync(_path, 'utf8');
 const readStream = _path => fs.createReadStream(_path);
 
@@ -59,10 +47,16 @@ const reads = {
   css: readText,
 };
 
+let outputPath;
+let actualAssetsPath;
+
+const fixturesPath = path.join(__dirname, '__fixtures__');
+const htmlFilename = 'en-hexlet-io-courses.html';
+const assetsDirname = 'en-hexlet-io-courses_files';
+const expectedAssetsPath = path.resolve(fixturesPath, assetsDirname);
+
 beforeAll(() => {
   axios.defaults.adapter = httpAdapter;
-
-  expectedHtml = fs.readFileSync(expectedHtmlPath, 'utf8');
 
   outputPath = fs.mkdtempSync(`${os.tmpdir()}${path.sep}`);
   actualAssetsPath = path.resolve(outputPath, assetsDirname);
@@ -74,41 +68,83 @@ beforeAll(() => {
     const assetName = pathname.slice(1).split('/').join('-');
     const extname = path.extname(pathname).slice(1);
     const asset = reads[extname](path.resolve(expectedAssetsPath, assetName));
-    assets.set(assetName, asset);
     nock('https://en.hexlet.io').get(pathname).reply(200, asset);
   });
 });
 
 test('https://en.hexlet.io/courses', () => {
   expect.assertions(24);
-  // console.log(outputPath);
+  console.log(outputPath);
   return load('https://en.hexlet.io/courses', outputPath)
-    .then(() => readFile(path.resolve(outputPath, htmlFilename), 'utf8'))
-    .then((actualHtml) => {
-      expect(actualHtml).toEqual(expectedHtml);
-      return readdir(actualAssetsPath);
-    })
-    .then((assetFilenames) => {
+    .then(() => {
+      const actualHtml = fs.readFileSync(path.resolve(outputPath, htmlFilename), 'utf8');
+      const expectedHtml = fs.readFileSync(path.resolve(fixturesPath, htmlFilename), 'utf8');
+      console.log(typeof actualHtml);
+      expect(actualHtml).toBe(expectedHtml);
+
+      const assetFilenames = fs.readdirSync(actualAssetsPath);
       assetFilenames.forEach((assetfn) => {
         const extname = path.extname(assetfn).slice(1);
+        let actualAsset;
+        let expectedAsset;
         if (extname === 'js' || extname === 'css') {
-          const expectedAsset = assets.get(assetfn);
-          const actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
-          expect(actualAsset).toEqual(expectedAsset);
+          actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
+          expectedAsset = fs.readFileSync(path.resolve(expectedAssetsPath, assetfn), 'utf8');
         } else {
           const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
-          let actualAsset;
           actualReadable.on('data', (chunk) => { actualAsset += chunk; });
           actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
 
-          const expectedReadable = assets.get(assetfn);
-          let expectedAsset;
+          const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
           expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
-          expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
-
-          expect(actualAsset).toEqual(expectedAsset);
+          expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); }); 
         }
+        expect(actualAsset).toBe(expectedAsset);
       });
     })
+    // .then(() => Promise.all([
+    //   readFile(path.resolve(outputPath, htmlFilename), 'utf8'),
+    //   readFile(path.resolve(fixturesPath, htmlFilename), 'utf8'),
+    // ]))
+    // .then(([actualHtml, expectedHtml]) => {
+    //   expect(actualHtml).toBe(expectedHtml);
+    //   return readdir(actualAssetsPath);
+    // })
+    // .then((assetFilenames) => {
+    //   assetFilenames.forEach((assetfn) => {
+    //     const extname = path.extname(assetfn).slice(1);
+    //     let actualAsset;
+    //     let expectedAsset;
+    //     if (extname === 'js' || extname === 'css') {
+    //       Promise.all([
+    //         readFile(path.resolve(actualAssetsPath, assetfn), 'utf8'),
+    //         readFile(path.resolve(expectedAssetsPath, assetfn), 'utf8'),
+    //       ])
+    //         .then(([_actualAsset, _expectedAsset]) => {
+    //           console.log(112);
+    //           console.log(typeof _actualAsset, typeof _expectedAsset);
+    //           console.log(_actualAsset === _expectedAsset);
+    //           // expect(actualAsset).toBe(expectedAsset);
+    //           actualAsset = _actualAsset;
+    //           expectedAsset = _expectedAsset;
+    //           // expect(true).toBe(true);
+    //           // return Promise.resolve(1);
+    //         })
+    //         .catch(e => console.error(e));
+    //     } else {
+    //       const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
+    //       // let actualAsset;
+    //       actualReadable.on('data', (chunk) => { actualAsset += chunk; });
+    //       actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+
+    //       const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
+    //       // let expectedAsset;
+    //       expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
+    //       expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+    //       // expect(actualAsset).toBe(expectedAsset);
+    //     }
+    //     expect(actualAsset).toBe(expectedAsset);
+    //   });
+    // })
     .catch(e => console.error(e));
 });
