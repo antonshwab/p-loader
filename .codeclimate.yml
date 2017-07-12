@@ -1,2 +1,27 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+  eslint:
+    enabled: true
+    channel: "eslint-3"
+    checks:
+      import/no-unresolved:
+        enabled: false
+  fixme:
+    enabled: true
+ecmaFeatures:
+  modules: true
+env:
+  es6: true
+  node: true
+ratings:
+  paths:
+  - "**.js"
 exclude_paths:
-- "__tests__/__fixtures__/"
+- __tests__/
+after_success:
+- codeclimate < coverage/lcov.info
