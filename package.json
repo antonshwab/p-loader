@@ -32,6 +32,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "cheerio": "^1.0.0-rc.1",
+    "debug": "^2.6.8",
     "nock": "^9.0.13",
     "yargs": "^8.0.2"
   },
@@ -42,7 +43,6 @@
     "babel-plugin-transform-runtime": "*",
     "babel-preset-env": "*",
     "babel-preset-stage-0": "*",
-    "debug": "*",
     "eslint": "*",
     "eslint-config-airbnb-base": "*",
     "eslint-plugin-import": "*",
