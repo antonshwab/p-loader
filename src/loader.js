@@ -22,6 +22,12 @@ const respType = {
   js: 'text',
 };
 
+const statusTexts = {
+  403: 'Forbidden',
+  404: 'Not Found',
+  500: 'Internal Server Error',
+};
+
 const writes = {
   stream: (res, _path) => res.data.pipe(fs.createWriteStream(_path)),
   text: (res, _path) => writeFile(_path, res.data),
@@ -97,16 +103,17 @@ const load = (url, output) => {
         results.map(([resp, _path, responseType]) => writes[responseType](resp, _path)));
     })
     .catch((e) => {
+      // console.error(e);
       let message;
-      const getHttpErrorMessage = (_status, _text, _reqUrl) => `Status: ${_status} ${_text} ${_reqUrl}`;
-      if (e.status) {
-        message = getHttpErrorMessage(e.status, e.statusText, e.config.url);
+      // console.error(e.response);
+      if (e.response) {
+        const statusText = e.response.statusText || statusTexts[e.response.status];
+        message = `Status: ${e.response.status} ${statusText} ${e.response.config.url}`;
       }
-      const getFsErrorMessage = (code, syscall, _path) => `Get Error: ${code}, when trying ${syscall} at ${_path}`;
       if (e.code) {
-        message = getFsErrorMessage(e.code, e.syscall, e.path);
+        message = `Get Error: ${e.code}, when trying ${e.syscall} at ${e.path}`;
       }
-      return Promise.reject(message);
+      return Promise.reject(message || e);
     });
 };
 

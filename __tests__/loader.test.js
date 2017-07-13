@@ -70,11 +70,11 @@ beforeEach(() => {
 
   nock(hexletUrl)
     .get('/resource-can-not-be-found')
-    .replyWithError({ status: 404, statusText: 'not found' })
+    .reply(404, { status: 404, statusText: 'not found' })
     .get('/forbidden')
-    .replyWithError({ status: 403, statusText: 'forbidden' })
+    .reply(403)
     .get('/internal-server-error')
-    .replyWithError({ status: 500, statusText: 'internal sever error' });
+    .reply(500);
 });
 
 test('check html https://en.hexlet.io/courses', () => {
@@ -158,7 +158,7 @@ test('check .ico: /assets/icons/default/favicon-8fa102c058afb01de5016a155d7db433
 test('403 forbidden', () => {
   expect.assertions(1);
   const status = 403;
-  const text = 'forbidden';
+  const text = 'Forbidden';
   const url = 'https://en.hexlet.io/forbidden';
   const message = `Status: ${status} ${text} ${url}`;
   return load(url, outputPath)
@@ -168,7 +168,7 @@ test('403 forbidden', () => {
 test('404 resource-can-not-be-found', () => {
   expect.assertions(1);
   const status = 404;
-  const text = 'not found';
+  const text = 'Not Found';
   const url = 'https://en.hexlet.io/resource-can-not-be-found';
   const message = `Status: ${status} ${text} ${url}`;
   return load(url, outputPath)
@@ -178,7 +178,7 @@ test('404 resource-can-not-be-found', () => {
 test('500 resource-can-not-be-found', () => {
   expect.assertions(1);
   const status = 500;
-  const text = 'internal sever error';
+  const text = 'Internal Server Error';
   const url = 'https://en.hexlet.io/internal-server-error';
   const message = `Status: ${status} ${text} ${url}`;
   return load(url, outputPath)
