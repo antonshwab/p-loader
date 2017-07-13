@@ -67,6 +67,14 @@ beforeEach(() => {
     const asset = read[extname](path.resolve(expectedAssetsPath, assetfn));
     nock(hexletUrl).get(pathname).reply(200, asset);
   });
+
+  nock(hexletUrl)
+    .get('/resource-can-not-be-found')
+    .replyWithError({ status: 404, statusText: 'not found' })
+    .get('/forbidden')
+    .replyWithError({ status: 403, statusText: 'forbidden' })
+    .get('/internal-server-error')
+    .replyWithError({ status: 500, statusText: 'internal sever error' });
 });
 
 test('check html https://en.hexlet.io/courses', () => {
@@ -146,3 +154,44 @@ test('check .ico: /assets/icons/default/favicon-8fa102c058afb01de5016a155d7db433
       expect(actualAsset).toBe(expectedAsset);
     });
 });
+
+test('403 forbidden', () => {
+  expect.assertions(1);
+  const status = 403;
+  const text = 'forbidden';
+  const url = 'https://en.hexlet.io/forbidden';
+  const message = `Status: ${status} ${text} ${url}`;
+  return load(url, outputPath)
+    .catch(e => expect(e).toBe(message));
+});
+
+test('404 resource-can-not-be-found', () => {
+  expect.assertions(1);
+  const status = 404;
+  const text = 'not found';
+  const url = 'https://en.hexlet.io/resource-can-not-be-found';
+  const message = `Status: ${status} ${text} ${url}`;
+  return load(url, outputPath)
+    .catch(e => expect(e).toBe(message));
+});
+
+test('500 resource-can-not-be-found', () => {
+  expect.assertions(1);
+  const status = 500;
+  const text = 'internal sever error';
+  const url = 'https://en.hexlet.io/internal-server-error';
+  const message = `Status: ${status} ${text} ${url}`;
+  return load(url, outputPath)
+    .catch(e => expect(e).toBe(message));
+});
+
+test('file already exist', () => {
+  expect.assertions(1);
+  const code = 'EEXIST';
+  const syscall = 'mkdir';
+  const message = `Get Error: ${code}, when trying ${syscall} at ${actualAssetsPath}`;
+  return load('https://en.hexlet.io/courses', outputPath)
+    .then(() => load('https://en.hexlet.io/courses', outputPath))
+    .catch(e => expect(e).toBe(message));
+});
+

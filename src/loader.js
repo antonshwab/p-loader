@@ -95,6 +95,18 @@ const load = (url, output) => {
       libDebug('End loading assets and start writing assets');
       return Promise.all(
         results.map(([resp, _path, responseType]) => writes[responseType](resp, _path)));
+    })
+    .catch((e) => {
+      let message;
+      const getHttpErrorMessage = (_status, _text, _reqUrl) => `Status: ${_status} ${_text} ${_reqUrl}`;
+      if (e.status) {
+        message = getHttpErrorMessage(e.status, e.statusText, e.config.url);
+      }
+      const getFsErrorMessage = (code, syscall, _path) => `Get Error: ${code}, when trying ${syscall} at ${_path}`;
+      if (e.code) {
+        message = getFsErrorMessage(e.code, e.syscall, e.path);
+      }
+      return Promise.reject(message);
     });
 };
 
