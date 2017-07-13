@@ -7,9 +7,6 @@ import { URL } from 'url';
 import debug from 'debug';
 
 const libDebug = debug('page-loader:lib');
-// const httpDebug = debug('page-loader:http');
-// const fsDebug = debug('page-loader:fs');
-// const htmlDebug = debug('page-loader:html');
 
 const writeFile = util.promisify(fs.writeFile);
 const mkdir = util.promisify(fs.mkdir);
@@ -22,11 +19,7 @@ const respType = {
   js: 'text',
 };
 
-const statusTexts = {
-  403: 'Forbidden',
-  404: 'Not Found',
-  500: 'Internal Server Error',
-};
+
 
 const writes = {
   stream: (res, _path) => res.data.pipe(fs.createWriteStream(_path)),
@@ -103,9 +96,12 @@ const load = (url, output) => {
         results.map(([resp, _path, responseType]) => writes[responseType](resp, _path)));
     })
     .catch((e) => {
-      // console.error(e);
+      const statusTexts = {
+        403: 'Forbidden',
+        404: 'Not Found',
+        500: 'Internal Server Error',
+      };
       let message;
-      // console.error(e.response);
       if (e.response) {
         const statusText = e.response.statusText || statusTexts[e.response.status];
         message = `Status: ${e.response.status} ${statusText} ${e.response.config.url}`;
