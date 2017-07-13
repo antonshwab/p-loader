@@ -3,12 +3,8 @@ import httpAdapter from 'axios/lib/adapters/http';
 import nock from 'nock';
 import path from 'path';
 import fs from 'fs';
-// import util from 'util';
 import os from 'os';
 import load from '../src';
-
-// const readFile = util.promisify(fs.readFile);
-// const readdir = util.promisify(fs.readdir);
 
 const assetsPathes = [
   '/assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js',
@@ -39,7 +35,7 @@ const assetsPathes = [
 const readText = _path => fs.readFileSync(_path, 'utf8');
 const readStream = _path => fs.createReadStream(_path);
 
-const reads = {
+const read = {
   png: readStream,
   ico: readStream,
   jpg: readStream,
@@ -47,105 +43,106 @@ const reads = {
   css: readText,
 };
 
+const getAssetfn = assetPathname => assetPathname.slice(1).split('/').join('-');
+
+const fixturesPath = path.join(__dirname, '__fixtures__');
+const assetsDirname = 'en-hexlet-io-courses_files';
+const expectedAssetsPath = path.resolve(fixturesPath, assetsDirname);
 let outputPath;
 let actualAssetsPath;
 
-const fixturesPath = path.join(__dirname, '__fixtures__');
-const htmlFilename = 'en-hexlet-io-courses.html';
-const assetsDirname = 'en-hexlet-io-courses_files';
-const expectedAssetsPath = path.resolve(fixturesPath, assetsDirname);
-
-beforeAll(() => {
+beforeEach(() => {
+  const hexletUrl = 'https://en.hexlet.io';
   axios.defaults.adapter = httpAdapter;
 
   outputPath = fs.mkdtempSync(`${os.tmpdir()}${path.sep}`);
   actualAssetsPath = path.resolve(outputPath, assetsDirname);
 
   const mockedHtml = fs.readFileSync(path.resolve(fixturesPath, 'mocked_en-hexlet-io-courses.html'));
-  nock('https://en.hexlet.io').get('/courses').reply(200, mockedHtml);
+  nock(hexletUrl).get('/courses').reply(200, mockedHtml);
 
   assetsPathes.forEach((pathname) => {
-    const assetName = pathname.slice(1).split('/').join('-');
+    const assetfn = getAssetfn(pathname);
     const extname = path.extname(pathname).slice(1);
-    const asset = reads[extname](path.resolve(expectedAssetsPath, assetName));
-    nock('https://en.hexlet.io').get(pathname).reply(200, asset);
+    const asset = read[extname](path.resolve(expectedAssetsPath, assetfn));
+    nock(hexletUrl).get(pathname).reply(200, asset);
   });
 });
 
-test('https://en.hexlet.io/courses', () => {
-  expect.assertions(24);
+test('check html https://en.hexlet.io/courses', () => {
+  expect.assertions(1);
   console.log(outputPath);
+  const htmlFilename = 'en-hexlet-io-courses.html';
   return load('https://en.hexlet.io/courses', outputPath)
     .then(() => {
       const actualHtml = fs.readFileSync(path.resolve(outputPath, htmlFilename), 'utf8');
       const expectedHtml = fs.readFileSync(path.resolve(fixturesPath, htmlFilename), 'utf8');
-      // console.log(typeof actualHtml);
       expect(actualHtml).toBe(expectedHtml);
+    });
+});
 
-      const assetFilenames = fs.readdirSync(actualAssetsPath);
-      assetFilenames.forEach((assetfn) => {
-        const extname = path.extname(assetfn).slice(1);
-        let actualAsset;
-        let expectedAsset;
-        if (extname === 'js' || extname === 'css') {
-          actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
-          expectedAsset = fs.readFileSync(path.resolve(expectedAssetsPath, assetfn), 'utf8');
-        } else {
-          const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
-          actualReadable.on('data', (chunk) => { actualAsset += chunk; });
-          actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+test('check .js: /assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js', () => {
+  expect.assertions(1);
+  console.log(outputPath);
+  const assetPathname = '/assets/application-de3fcbe496ee3249cfdc6d8443c83c0502225f23ad09427f732fade418a2a159.js';
+  const assetfn = getAssetfn(assetPathname);
+  return load('https://en.hexlet.io/courses', outputPath)
+    .then(() => {
+      const actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
+      const expectedAsset = fs.readFileSync(path.resolve(expectedAssetsPath, assetfn), 'utf8');
+      expect(actualAsset).toBe(expectedAsset);
+    });
+});
 
-          const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
-          expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
-          expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
-        }
-        expect(actualAsset).toBe(expectedAsset);
-      });
-    })
-    // .then(() => Promise.all([
-    //   readFile(path.resolve(outputPath, htmlFilename), 'utf8'),
-    //   readFile(path.resolve(fixturesPath, htmlFilename), 'utf8'),
-    // ]))
-    // .then(([actualHtml, expectedHtml]) => {
-    //   expect(actualHtml).toBe(expectedHtml);
-    //   return readdir(actualAssetsPath);
-    // })
-    // .then((assetFilenames) => {
-    //   assetFilenames.forEach((assetfn) => {
-    //     const extname = path.extname(assetfn).slice(1);
-    //     let actualAsset;
-    //     let expectedAsset;
-    //     if (extname === 'js' || extname === 'css') {
-    //       Promise.all([
-    //         readFile(path.resolve(actualAssetsPath, assetfn), 'utf8'),
-    //         readFile(path.resolve(expectedAssetsPath, assetfn), 'utf8'),
-    //       ])
-    //         .then(([_actualAsset, _expectedAsset]) => {
-    //           console.log(112);
-    //           console.log(typeof _actualAsset, typeof _expectedAsset);
-    //           console.log(_actualAsset === _expectedAsset);
-    //           // expect(actualAsset).toBe(expectedAsset);
-    //           actualAsset = _actualAsset;
-    //           expectedAsset = _expectedAsset;
-    //           // expect(true).toBe(true);
-    //           // return Promise.resolve(1);
-    //         })
-    //         .catch(e => console.error(e));
-    //     } else {
-    //       const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
-    //       // let actualAsset;
-    //       actualReadable.on('data', (chunk) => { actualAsset += chunk; });
-    //       actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+test('check .css: /assets/application-f6f7fab8ecc488e8feb7cec9f3f18a573ac349b6eed31cbf1b406d998bd88518.css', () => {
+  expect.assertions(1);
+  console.log(outputPath);
+  const assetPathname = '/assets/application-f6f7fab8ecc488e8feb7cec9f3f18a573ac349b6eed31cbf1b406d998bd88518.css';
+  const assetfn = getAssetfn(assetPathname);
+  return load('https://en.hexlet.io/courses', outputPath)
+    .then(() => {
+      const actualAsset = fs.readFileSync(path.resolve(actualAssetsPath, assetfn), 'utf8');
+      const expectedAsset = fs.readFileSync(path.resolve(expectedAssetsPath, assetfn), 'utf8');
+      expect(actualAsset).toBe(expectedAsset);
+    });
+});
 
-    //       const expectedReadable = 
-  //  fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
-    //       // let expectedAsset;
-    //       expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
-    //       expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
-    //       // expect(actualAsset).toBe(expectedAsset);
-    //     }
-    //     expect(actualAsset).toBe(expectedAsset);
-    //   });
-    // })
-    .catch(e => console.error(e));
+test('check .png: /assets/icons/default/android-icon-192x192-d4b29b393f0ec444bed29668e9b4b16aeb0a9c5312700e4f0819a96f72286cfc.png', () => {
+  expect.assertions(1);
+  console.log(outputPath);
+  const assetPathname = '/assets/icons/default/android-icon-192x192-d4b29b393f0ec444bed29668e9b4b16aeb0a9c5312700e4f0819a96f72286cfc.png';
+  const assetfn = getAssetfn(assetPathname);
+  return load('https://en.hexlet.io/courses', outputPath)
+    .then(() => {
+      let actualAsset;
+      let expectedAsset;
+      const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
+      actualReadable.on('data', (chunk) => { actualAsset += chunk; });
+      actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+
+      const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
+      expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
+      expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+      expect(actualAsset).toBe(expectedAsset);
+    });
+});
+
+test('check .ico: /assets/icons/default/favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico', () => {
+  expect.assertions(1);
+  console.log(outputPath);
+  const assetPathname = '/assets/icons/default/favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico';
+  const assetfn = getAssetfn(assetPathname);
+  return load('https://en.hexlet.io/courses', outputPath)
+    .then(() => {
+      let actualAsset;
+      let expectedAsset;
+      const actualReadable = fs.createReadStream(path.resolve(actualAssetsPath, assetfn));
+      actualReadable.on('data', (chunk) => { actualAsset += chunk; });
+      actualReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+
+      const expectedReadable = fs.createReadStream(path.resolve(expectedAssetsPath, assetfn));
+      expectedReadable.on('data', (chunk) => { actualAsset += chunk; });
+      expectedReadable.on('end', () => { actualAsset = actualAsset.toString(); });
+      expect(actualAsset).toBe(expectedAsset);
+    });
 });
