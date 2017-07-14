@@ -19,14 +19,70 @@ const respType = {
   js: 'text',
 };
 
-
-
 const writes = {
   stream: (res, _path) => res.data.pipe(fs.createWriteStream(_path)),
   text: (res, _path) => writeFile(_path, res.data),
 };
 
-const load = (url, output) => {
+const processHtml = (html, url, output, assetsDirname) => {
+  const pathAndOpts = new Map();
+
+  libDebug('Start process html');
+
+  const $ = cheerio.load(html);
+
+  libDebug('Pick up elements with assets');
+
+  const elemsWithAssets = $('script[src^="/"], link[href^="/"], img[src^="/"], meta[content^="/"]');
+
+  libDebug('Process assets and prepare pathAndOpts');
+
+  elemsWithAssets.each((i, elem) => {
+    const [currAssetPath, attrib] = [
+      [$(elem).attr('src'), 'src'],
+      [$(elem).attr('href'), 'href'],
+      [$(elem).attr('content'), 'content'],
+    ].find(([_path]) => _path !== undefined);
+
+    const extname = path.extname(currAssetPath).slice(1);
+    const newRelativeAssetPath = path.format({
+      dir: assetsDirname,
+      base: currAssetPath.slice(1).split('/').join('-'),
+    });
+
+    $(elem).attr(attrib, newRelativeAssetPath);
+    const newAbsoluteAssetPath = path.resolve(output, newRelativeAssetPath);
+    const optForAxios = {
+      method: 'get',
+      url: new URL(currAssetPath, url).href,
+      responseType: respType[extname],
+    };
+    libDebug('Current extname asset: %s', extname);
+    libDebug('Path to load asset: %s', newAbsoluteAssetPath);
+    libDebug('Current asset options for axios: %s', JSON.stringify(optForAxios));
+    pathAndOpts.set(newAbsoluteAssetPath, optForAxios);
+  });
+  const localHtml = $.html();
+
+  return { localHtml, pathAndOpts };
+};
+
+const getPathesAndNames = (url, output) => {
+  const { hostname, pathname } = new URL(url);
+  const hostnamePart = hostname.split('.');
+  const pathnamePart = pathname === '/' ? [] : pathname.slice(1).split('/');
+  const samePart = [...hostnamePart, ...pathnamePart].join('-');
+  const htmlFilename = [samePart, '.html'].join('');
+  const assetsDirname = [samePart, '_files'].join('');
+  const htmlPath = path.join(output, htmlFilename);
+  const assetsPath = path.join(output, assetsDirname);
+  libDebug('Path to loaded html: %s', htmlPath);
+  libDebug('Path to loaded assets: $s', assetsPath);
+  return { assetsDirname, assetsPath, htmlPath, htmlFilename };
+};
+
+const load = (url, output, ctx = {}) => {
+  ctx.assetsUrls = [];
   libDebug('load start!');
   return axios
     .get(url, {
@@ -36,64 +92,29 @@ const load = (url, output) => {
     })
     .then((res) => {
       libDebug('start process response');
-      const { hostname, pathname } = new URL(url);
-      const hostnamePart = hostname.split('.');
-      const pathnamePart = pathname === '/' ? [] : pathname.slice(1).split('/');
-      const samePart = [...hostnamePart, ...pathnamePart].join('-');
-      const htmlFilename = [samePart, '.html'].join('');
-      const assetsDirname = [samePart, '_files'].join('');
-      const htmlPath = path.join(output, htmlFilename);
-      const assetsPath = path.join(output, assetsDirname);
-      libDebug('Path to loaded html: %s', htmlPath);
-      libDebug('Path to loaded assets: $s', assetsPath);
-      const pathAndOpts = new Map();
 
-      libDebug('Start process html');
-      const html = res.data;
-      const $ = cheerio.load(html);
-      libDebug('Pick up elements with assets');
-      const elemsWithAssets = $('script[src^="/"], link[href^="/"], img[src^="/"], meta[content^="/"]');
-      libDebug('Process assets and prepare pathAndOpts');
-      elemsWithAssets.each((i, elem) => {
-        const [currAssetPath, attrib] = [
-          [$(elem).attr('src'), 'src'],
-          [$(elem).attr('href'), 'href'],
-          [$(elem).attr('content'), 'content'],
-        ].find(([_path]) => _path !== undefined);
-
-        const extname = path.extname(currAssetPath).slice(1);
-        const newRelativeAssetPath = path.format({
-          dir: assetsDirname,
-          base: currAssetPath.slice(1).split('/').join('-'),
-        });
-
-        $(elem).attr(attrib, newRelativeAssetPath);
-        const newAbsoluteAssetPath = path.resolve(output, newRelativeAssetPath);
-        const optForAxios = {
-          method: 'get',
-          url: new URL(currAssetPath, url).href,
-          responseType: respType[extname],
-        };
-        libDebug('Current extname asset: %s', extname);
-        libDebug('Path to load asset: %s', newAbsoluteAssetPath);
-        libDebug('Current asset options for axios: %s', JSON.stringify(optForAxios));
-        pathAndOpts.set(newAbsoluteAssetPath, optForAxios);
-      });
-      const localHtml = $.html();
+      const { assetsDirname, assetsPath, htmlPath, htmlFilename } = getPathesAndNames(url, output);
+      const { pathAndOpts, localHtml } = processHtml(res.data, url, output, assetsDirname);
 
       libDebug('Make dir for assets and write changed html');
-      return Promise.all([pathAndOpts, mkdir(assetsPath), writeFile(htmlPath, localHtml)]);
+
+      return Promise.all(
+        [pathAndOpts, htmlFilename, mkdir(assetsPath), writeFile(htmlPath, localHtml)]);
     })
-    .then(([pathAndOpts]) => {
+    .then(([pathAndOpts, htmlFilename]) => {
       libDebug('Start loading assets');
+      ctx.pageFilename = htmlFilename;
       return Promise.all(
         Array.from(pathAndOpts)
-          .map(([_path, opt]) => Promise.all([axios(opt), _path, opt.responseType])));
+          .map(([_path, opt]) => Promise.all([axios(opt), _path, opt.responseType, opt.url])));
     })
     .then((results) => {
       libDebug('End loading assets and start writing assets');
       return Promise.all(
-        results.map(([resp, _path, responseType]) => writes[responseType](resp, _path)));
+        results.map(([resp, _path, responseType, assetUrl]) => {
+          ctx.assetsUrls = [...ctx.assetsUrls, assetUrl];
+          return writes[responseType](resp, _path);
+        }));
     })
     .catch((e) => {
       const statusTexts = {
