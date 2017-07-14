@@ -3,10 +3,11 @@
 [![Issue Count](https://codeclimate.com/github/antonshwab/project-lvl3-s100/badges/issue_count.svg)](https://codeclimate.com/github/antonshwab/project-lvl3-s100)
 [![Test Coverage](https://codeclimate.com/github/antonshwab/project-lvl3-s100/badges/coverage.svg)](https://codeclimate.com/github/antonshwab/project-lvl3-s100/coverage)
 
-# project Page-loader
+# Project Page Loader
 
-1. clone repo
-2. npm link
+1. Install: `npm i -g page-loader`
+2. Help: `page-loader --help`
+3. Usage:
 
 ```
 Commands:
@@ -20,3 +21,4 @@ Options:
   
                          [boolean]
 ```
+
