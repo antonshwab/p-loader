@@ -1,8 +1,5 @@
 install: install-deps
 
-# run:
-# 	npm run babel-node -- 'src/bin/page-loader.js' 10
-
 install-deps:
 	yarn
 
@@ -14,7 +11,7 @@ test:
 	npm test
 
 testwatch:
-	npm testwatch
+	npm run testwatch
 
 lint:
 	npm run eslint -- src __tests__
