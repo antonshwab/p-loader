@@ -1,6 +1,6 @@
 {
-  "name": "page-loader",
-  "version": "0.1.0",
+  "name": "p-loader",
+  "version": "0.1.1",
   "description": "Hexlet Project #3",
   "main": "dist/index.js",
   "bin": {
