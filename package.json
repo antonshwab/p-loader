@@ -1,6 +1,6 @@
 {
   "name": "page-loader",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Hexlet Project #3",
   "main": "dist/index.js",
   "bin": {
@@ -26,9 +26,9 @@
   "author": "Anton Shvab",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/antonshwab/project-lvl3-s100/issues"
+    "url": "https://github.com/antonshwab/p-loader/issues"
   },
-  "homepage": "https://github.com/antonshwab/project-lvl3-s100",
+  "homepage": "https://github.com/antonshwab/p-loader",
   "dependencies": {
     "axios": "^0.16.2",
     "cheerio": "^1.0.0-rc.1",
