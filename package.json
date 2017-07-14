@@ -1,10 +1,10 @@
 {
   "name": "p-loader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Hexlet Project #3",
   "main": "dist/index.js",
   "bin": {
-    "load-page": "dist/bin/page-loader.js"
+    "load-page": "dist/bin/p-loader.js"
   },
   "scripts": {
     "test": "jest",

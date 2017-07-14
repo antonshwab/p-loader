@@ -5,8 +5,8 @@
 
 # Project Page Loader
 
-1. Install: `npm i -g page-loader`
-2. Help: `page-loader --help`
+1. Install: `npm i -g p-loader`
+2. Help: `p-loader --help`
 3. Usage:
 
 ```
